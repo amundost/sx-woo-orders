@@ -4,7 +4,7 @@ Plugin Name: SX Woo Orders
 Plugin URI: https://github.com/amundost/sx-woo-orders
 Description: A WordPress plugin for managing WooCommerce orders.
 Version: 1.0
-Author: Your Name
+Author: Amund Østvoll
 Author URI: https://www.slackhax.com
 License: GPL2
 */
@@ -98,5 +98,48 @@ function sx_woo_orders_check_for_update($transient)
     }
 
     return $transient;
+}
+add_action('admin_menu', 'slackhax_admin');
+
+function slackhax_admin()
+{
+    add_menu_page(
+        'SlackHax Admin',       // Page title
+        'Slackhax',             // Menu title
+        'manage_options',          // Capability required
+        'slackhax-admin',       // Menu slug
+        'sx_admin_page_content',   // Function to display content
+        'dashicons-admin-generic', // Icon URL (or dashicon class)
+        2                          // Position on the menu
+    );
+    // Add first submenu item
+    add_submenu_page(
+        'slackhax-admin',          // Parent slug
+        'All Orders',         // Page title
+        'All Orders',         // Submenu title
+        'manage_options',     // Capability
+        'all-orders',         // Menu slug
+        'sx_woo_orders_page_content' // Callback function for submenu page
+    );
+}
+
+function sx_admin_page_content()
+{
+    ?>
+<div>
+    <h1>SlackHax</h1>
+    <p>SlackHax extra tools</p>
+</div>
+<?php
+}
+
+function sx_woo_orders_page_content()
+{
+    ?>
+<div class="wrap">
+    <h1>Welcome to My Custom Admin Page</h1>
+    <p>This is where you add your custom admin content.</p>
+</div>
+<?php
 }
 add_filter('site_transient_update_plugins', 'sx_woo_orders_check_for_update');
