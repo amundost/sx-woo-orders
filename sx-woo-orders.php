@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 
     // Shortcode to display WooCommerce orders
-    function sx_woo_orders_list_shortcode($atts)
+    function sx_woo_orders_list()
     {
         global $wpdb;
 
@@ -64,7 +64,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
         return $output;
     }
-    add_shortcode('sx_woo_orders_list', 'sx_woo_orders_list_shortcode');
 }
 
 // Update check function
@@ -135,11 +134,9 @@ function sx_admin_page_content()
 
 function sx_woo_orders_page_content()
 {
-    ?>
-<div class="wrap">
-    <h1>Welcome to My Custom Admin Page</h1>
-    <p>This is where you add your custom admin content.</p>
-</div>
-<?php
+    echo "<div class='wrap'>";
+    echo "<h1>View WooCommerce orders</h1>";
+    echo sx_woo_orders_list();
+    echo "</div>";
 }
 add_filter('site_transient_update_plugins', 'sx_woo_orders_check_for_update');
