@@ -26,7 +26,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
         $query = $wpdb->prepare("
             SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created 
-            FROM {$wpdb->prefix}orders as o
+            FROM {$wpdb->prefix}wc_orders as o
             JOIN {$wpdb->prefix}wc_order_addresses as a ON o.ID = a.order_id 
             JOIN {$wpdb->prefix}wc_order_stats as s ON o.ID = s.order_id 
             WHERE a.address_type = %s 
