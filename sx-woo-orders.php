@@ -13,6 +13,9 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+add_filter('site_transient_update_plugins', 'sx_woo_orders_check_for_update');
+add_action('admin_menu', 'slackhax_admin');
+
 // Check for WooCommerce installation and activation
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 
@@ -69,36 +72,49 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 // Update check function
 function sx_woo_orders_check_for_update($transient)
 {
+    // If no update info is available, return the transient as is.
+    if (empty($transient->checked)) {
+        return $transient;
+    }
+
     $plugin_slug = 'sx-woo-orders';
     $github_api_url = 'https://api.github.com/repos/amundost/sx-woo-orders/releases/latest';
 
-    $response = wp_remote_get($github_api_url, array('timeout' => 15, 'headers' => array('Accept' => 'application/vnd.github.v3+json')));
+    // Make an API request to GitHub to fetch the latest release information.
+    $response = wp_remote_get($github_api_url);
 
+    // If an error occurred during the request, return the transient as is.
     if (is_wp_error($response)) {
         return $transient;
     }
 
-    $release_info = json_decode(wp_remote_retrieve_body($response));
+    $response_body = wp_remote_retrieve_body($response);
+    $data = json_decode($response_body);
 
-    if (empty($release_info) || !isset($release_info->tag_name)) {
+    // If the response is empty or malformed, return the transient as is.
+    if (empty($data)) {
         return $transient;
     }
 
-    $new_version = $release_info->tag_name;
-    $current_version = '1.0.3';  // Make sure this version matches the version in your plugin header
+    // Get the current version from the plugin header
+    $plugin_file = plugin_dir_path(__FILE__) . "{$plugin_slug}.php";
+    $plugin_data = get_plugin_data($plugin_file);
+    $current_version = $plugin_data['Version'];
 
-    if (version_compare($current_version, $new_version, '<')) {
-        $transient->response['sx-woo-orders/sx-woo-orders.php'] = (object) array(
-            'slug' => $plugin_slug,
-            'new_version' => $new_version,
-            'url' => $release_info->html_url,
-            'package' => $release_info->zipball_url,
-        );
+    // Check if a new version is available
+    if (version_compare($current_version, $data->tag_name, '<')) {
+        $plugin_obj = new stdClass();
+        $plugin_obj->slug = $plugin_slug;
+        $plugin_obj->new_version = $data->tag_name;
+        $plugin_obj->url = $data->html_url;
+        $plugin_obj->package = $data->zipball_url;
+
+        $transient->response[$plugin_slug . '/' . $plugin_slug . '.php'] = $plugin_obj;
     }
 
     return $transient;
 }
-add_action('admin_menu', 'slackhax_admin');
+
 
 function slackhax_admin()
 {
@@ -124,12 +140,10 @@ function slackhax_admin()
 
 function sx_admin_page_content()
 {
-    ?>
-<div>
-    <h1>SlackHax</h1>
-    <p>SlackHax extra tools</p>
-</div>
-<?php
+    echo "<div class='wrap'>";
+    echo "<h1>SlackHax</h1>";
+    echo "<p>SlackHax extra tools</p>";
+    echo "</div>";
 }
 
 function sx_woo_orders_page_content()
@@ -139,4 +153,3 @@ function sx_woo_orders_page_content()
     echo sx_woo_orders_list();
     echo "</div>";
 }
-add_filter('site_transient_update_plugins', 'sx_woo_orders_check_for_update');
