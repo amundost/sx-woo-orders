@@ -21,16 +21,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     {
         global $wpdb;
 
-        // Fetch orders from WooCommerce orders table
-        $results = $wpdb->get_results("
-            SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created
-            FROM {$wpdb->prefix}orders as o, {$wpdb->prefix}wc_order_addresses as o,{$wpdb->prefix}wc_order_stats as s
-            WHERE o.ID = a.order_id
-            AND o.ID = s.order_id
-            AND a.address_type = 'billing'
-            ORDER BY post_date DESC
-        ");
+        $query = $wpdb->prepare("
+            SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created 
+            FROM {$wpdb->prefix}orders as o
+            JOIN {$wpdb->prefix}wc_order_addresses as a ON o.ID = a.order_id 
+            JOIN {$wpdb->prefix}wc_order_stats as s ON o.ID = s.order_id 
+            WHERE a.address_type = %s 
+            ORDER BY o.post_date DESC
+        ", 'billing');
 
+        $results = $wpdb->get_results($query);
         if (empty($results)) {
             return 'No orders found.';
         }
