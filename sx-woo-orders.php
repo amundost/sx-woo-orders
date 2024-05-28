@@ -66,7 +66,6 @@ function sx_woo_orders_page_content()
 function sx_woo_order_details()
 {
     echo "<div class='wrap'>";
-    echo "<h1>View WooCommerce orders</h1>";
-    require_once ('sx-woo-orderdetails.php');
+    require_once ('sx-woo-order-details.php');
     echo "</div>";
 }
