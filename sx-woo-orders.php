@@ -37,6 +37,14 @@ function slackhax_admin()
         'all-orders',         // Menu slug
         'sx_woo_orders_page_content' // Callback function for submenu page
     );
+    add_submenu_page(
+        'slackhax-admin',          // Parent slug
+        'Order Details',         // Page title
+        'Order Details',         // Submenu title
+        'manage_options',     // Capability
+        'orders-details',         // Menu slug
+        'sx_woo_order_details' // Callback function for submenu page
+    );
 }
 
 function sx_admin_page_content()
@@ -53,5 +61,12 @@ function sx_woo_orders_page_content()
     echo "<div class='wrap'>";
     echo "<h1>View WooCommerce orders</h1>";
     require_once ('sx-woo-orderlist.php');
+    echo "</div>";
+}
+function sx_woo_order_details()
+{
+    echo "<div class='wrap'>";
+    echo "<h1>View WooCommerce orders</h1>";
+    require_once ('sx-woo-orderdetails.php');
     echo "</div>";
 }
