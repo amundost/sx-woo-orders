@@ -4,7 +4,7 @@ echo "<form method='POST'><button type='submit' name='check_updates'>Check for u
 if (isset($_POST['check_updates'])) {
     sx_woo_orders_check_for_update();
 }
-if (isset($_POST['update plugin'])) {
+if (isset($_POST['update_plugin'])) {
     $plugin_slug = 'sx-woo-orders'; // The slug of your plugin
     $version = $_POST['version'];
     $zip_url = "https://github.com/amundost/sx-woo-orders/archive/refs/tags/$version.zip";
@@ -60,7 +60,7 @@ function updatePlugin($plugin_slug, $zip_url)
     include_once (ABSPATH . 'wp-admin/includes/class-wp-upgrader.php'); // Load the upgrade API
 
     // Create a temporary directory to store the plugin zip
-    $tmp_dir = wp_tempnam();
+    $tmp_dir = get_temp_dir();
     $tmp_file = $tmp_dir . '/' . $plugin_slug . '.zip';
 
     // Fetch the new plugin zip file
