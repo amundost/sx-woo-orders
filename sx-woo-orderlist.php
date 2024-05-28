@@ -5,16 +5,14 @@
 function sx_woo_orders_list()
 {
     if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-        echo "<p>WooCommerce is active. Checking orders</p>";
         global $wpdb;
 
         $query = $wpdb->prepare("
-            SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created 
+            SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created, a.address_type 
             FROM {$wpdb->prefix}wc_orders as o
             JOIN {$wpdb->prefix}wc_order_addresses as a ON o.ID = a.order_id 
             JOIN {$wpdb->prefix}wc_order_stats as s ON o.ID = s.order_id 
-            WHERE a.address_type = %s 
-            ORDER BY o.post_date DESC
+            WHERE a.address_type like %s
         ", 'billing');
 
         $results = $wpdb->get_results($query);
@@ -22,13 +20,14 @@ function sx_woo_orders_list()
             return 'No orders found.';
         }
 
-        $output = '<table style="width: 100%; border-collapse: collapse;" border="1">
+        $output = '<table style="width: 100%; border-collapse: collapse; text-align: center;" border="1">
                     <thead>
                         <tr>
                             <th>Order ID</th>
                             <th>Order Date</th>
                             <th>Order Status</th>
                             <th>Customer</th>
+                            <th>Details</th>
                         </tr>
                     </thead>
                     <tbody>';
@@ -44,6 +43,7 @@ function sx_woo_orders_list()
                             <td>' . esc_html($order_date) . '</td>
                             <td>' . esc_html($order_status) . '</td>
                             <td>' . esc_html($name) . '</td>
+                            <td>Print Details</td>
                         </tr>';
         }
 
@@ -68,23 +68,5 @@ function count_wc_orders()
     // Return the count
     return $count;
 }
-function listOrders()
-{
-    global $wpdb;
-
-
-    echo "<p>Total Orders: " . count_wc_orders() . "</p>";
-
-    $query = $wpdb->prepare("
-        SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created 
-        FROM {$wpdb->prefix}wc_orders as o
-        JOIN {$wpdb->prefix}wc_order_addresses as a ON o.ID = a.order_id 
-        JOIN {$wpdb->prefix}wc_order_stats as s ON o.ID = s.order_id 
-        WHERE a.address_type = %s 
-        ORDER BY o.post_date DESC
-    ", 'billing');
-
-    $results = $wpdb->get_results($query);
-}
 echo '<h1>OrderList</h1>';
-echo listOrders();
+echo sx_woo_orders_list();
