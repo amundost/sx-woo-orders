@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Admin Order View
+Template Name: Print Orders
 */
 
 // Ensure the user is an admin
