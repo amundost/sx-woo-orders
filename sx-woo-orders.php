@@ -3,7 +3,7 @@
 Plugin Name: SX Woo Orders
 Plugin URI: https://github.com/amundost/sx-woo-orders
 Description: A WordPress plugin for managing WooCommerce orders.
-Version: 1.0.11
+Version: 1.0.12
 Author: Amund Østvoll
 Author URI: https://www.slackhax.com
 License: GPL2
@@ -69,3 +69,18 @@ function sx_woo_order_details()
     require_once ('sx-woo-order-details.php');
     echo "</div>";
 }
+function my_plugin_register_page_templates($templates)
+{
+    $templates['templates/page-template-print-orders.php'] = 'Print Orders';
+    return $templates;
+}
+add_filter('theme_page_templates', 'my_plugin_register_page_templates');
+
+function my_plugin_load_page_template($template)
+{
+    if (is_page_template('templates/page-template-print-orders.php')) {
+        $template = plugin_dir_path(__FILE__) . 'templates/page-template-print-orders.php';
+    }
+    return $template;
+}
+add_filter('template_include', 'my_plugin_load_page_template');
