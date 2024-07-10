@@ -3,7 +3,7 @@
 Plugin Name: SX Woo Orders
 Plugin URI: https://github.com/amundost/sx-woo-orders
 Description: A WordPress plugin for managing WooCommerce orders.
-Version: 1.0.13
+Version: 1.0.14
 Author: Amund Østvoll
 Author URI: https://www.slackhax.com
 License: GPL2
@@ -15,35 +15,44 @@ if (!defined('ABSPATH')) {
 
 add_action('admin_menu', 'slackhax_admin');
 
-
-
 function slackhax_admin()
 {
     add_menu_page(
         'SlackHax Admin',       // Page title
         'SlackHax',             // Menu title
-        'manage_options',          // Capability required
+        'manage_options',       // Capability required
         'slackhax-admin',       // Menu slug
-        'sx_admin_page_content',   // Function to display content
+        'sx_admin_page_content',// Function to display content
         'dashicons-admin-generic', // Icon URL (or dashicon class)
-        2                          // Position on the menu
+        2                       // Position on the menu
     );
     // Add first submenu item
     add_submenu_page(
         'slackhax-admin',          // Parent slug
-        'All Orders',         // Page title
-        'All Orders',         // Submenu title
-        'manage_options',     // Capability
-        'all-orders',         // Menu slug
-        'sx_woo_orders_page_content' // Callback function for submenu page
+        'All Orders',              // Page title
+        'All Orders',              // Submenu title
+        'manage_options',          // Capability
+        'all-orders',              // Menu slug
+        'sx_woo_orders_page_content', // Callback function for submenu page
+        100
     );
     add_submenu_page(
         'slackhax-admin',          // Parent slug
-        'Order Details',         // Page title
-        'Order Details',         // Submenu title
-        'manage_options',     // Capability
-        'orders-details',         // Menu slug
-        'sx_woo_order_details' // Callback function for submenu page
+        'Order Details',           // Page title
+        'Order Details',           // Submenu title
+        'manage_options',          // Capability
+        'orders-details',          // Menu slug
+        'sx_woo_order_details',    // Callback function for submenu page
+        102
+    );
+    add_submenu_page(
+        'slackhax-admin',          // Parent slug
+        'Debug Log',               // Page title
+        'Debug Log',               // Submenu title
+        'manage_options',          // Capability
+        'sx-woo-orders-debug-log', // Menu slug
+        'sx_woo_orders_display_debug_log', // Callback function for submenu page
+        103                       // Position on the menu
     );
 }
 
@@ -63,25 +72,53 @@ function sx_woo_orders_page_content()
     require_once ('sx-woo-orderlist.php');
     echo "</div>";
 }
+
 function sx_woo_order_details()
 {
     echo "<div class='wrap'>";
     require_once ('sx-woo-order-details.php');
     echo "</div>";
 }
+// Function to get the URL of the "Print Orders" page
+function sx_woo_orders_get_print_orders_page_url()
+{
+    $page = get_page_by_title('Print Orders');
+    if ($page) {
+        return get_permalink($page->ID);
+    }
+    return '';
+}
+
+// Display the debug log
+function sx_woo_orders_display_debug_log()
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $log_file = WP_CONTENT_DIR . '/debug.log';
+
+    echo '<div class="wrap">';
+    echo '<h1>Debug Log</h1>';
+    echo '<pre style="background: #fff; padding: 10px; border: 1px solid #ccc; max-height: 600px; overflow: auto;">';
+
+    if (file_exists($log_file)) {
+        echo esc_html(file_get_contents($log_file));
+    } else {
+        echo 'No debug log found.';
+    }
+
+    echo '</pre>';
+    echo '</div>';
+}
+
+// Register the template
 function sx_woo_orders_register_page_templates($templates)
 {
     $templates['templates/page-template-print-orders.php'] = 'Print Orders';
     return $templates;
 }
 add_filter('theme_page_templates', 'sx_woo_orders_register_page_templates');
-
-function sx_woo_orders_add_new_template($posts_templates)
-{
-    $posts_templates['templates/page-template-print-orders.php'] = 'Print Orders';
-    return $posts_templates;
-}
-add_filter('theme_page_templates', 'sx_woo_orders_add_new_template');
 
 function sx_woo_orders_load_page_template($template)
 {
@@ -100,6 +137,11 @@ function sx_woo_orders_create_page()
     $page_check = get_page_by_title($page_title);
     $page_template = 'templates/page-template-print-orders.php';
 
+    // Log for debugging
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('sx_woo_orders_create_page: Checking if page exists');
+    }
+
     // If the page doesn't exist, create it
     if (!isset($page_check->ID)) {
         $page = array(
@@ -111,8 +153,18 @@ function sx_woo_orders_create_page()
         );
         $page_id = wp_insert_post($page);
 
+        // Log for debugging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('sx_woo_orders_create_page: Page created with ID ' . $page_id);
+        }
+
         // Update the page to use the custom template
         update_post_meta($page_id, '_wp_page_template', $page_template);
+    } else {
+        // Log for debugging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('sx_woo_orders_create_page: Page already exists with ID ' . $page_check->ID);
+        }
     }
 }
 

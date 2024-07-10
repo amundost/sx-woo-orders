@@ -38,12 +38,15 @@ function sx_woo_orders_list()
             $order_status = $order->status;
             $name = $order->first_name . " " . $order->last_name;
 
+            // Get the URL of the "Print Orders" page and append the order ID as a query parameter
+            $print_orders_url = sx_woo_orders_get_print_orders_page_url() . '?order_id=' . $order_id;
+
             $output .= '<tr>
                             <td>' . esc_html($order_id) . '</td>
                             <td>' . esc_html($order_date) . '</td>
                             <td>' . esc_html($order_status) . '</td>
                             <td>' . esc_html($name) . '</td>
-                            <td>Print Details</td>
+                            <td><a href="' . esc_url($print_orders_url) . '">Print Details</a></td>
                         </tr>';
         }
 
