@@ -3,7 +3,7 @@
 Plugin Name: SX Woo Orders
 Plugin URI: https://github.com/amundost/sx-woo-orders
 Description: A WordPress plugin for managing WooCommerce orders.
-Version: 1.0.14
+Version: 1.0.15
 Author: Amund Østvoll
 Author URI: https://www.slackhax.com
 License: GPL2
@@ -79,15 +79,6 @@ function sx_woo_order_details()
     require_once ('sx-woo-order-details.php');
     echo "</div>";
 }
-// Function to get the URL of the "Print Orders" page
-function sx_woo_orders_get_print_orders_page_url()
-{
-    $page = get_page_by_title('Print Orders');
-    if ($page) {
-        return get_permalink($page->ID);
-    }
-    return '';
-}
 
 // Display the debug log
 function sx_woo_orders_display_debug_log()
@@ -115,15 +106,25 @@ function sx_woo_orders_display_debug_log()
 // Register the template
 function sx_woo_orders_register_page_templates($templates)
 {
-    $templates['templates/page-template-print-orders.php'] = 'Print Orders';
+    $templates['templates/page-template-print-order.php'] = 'Print Orders';
     return $templates;
 }
 add_filter('theme_page_templates', 'sx_woo_orders_register_page_templates');
 
 function sx_woo_orders_load_page_template($template)
 {
-    if (is_page_template('templates/page-template-print-orders.php')) {
-        $template = plugin_dir_path(__FILE__) . 'templates/page-template-print-orders.php';
+    if (is_page_template('templates/page-template-print-order.php')) {
+        $custom_template = plugin_dir_path(__FILE__) . 'templates/page-template-print-order.php';
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('sx_woo_orders_load_page_template: Loading template from ' . $custom_template);
+        }
+        if (file_exists($custom_template)) {
+            $template = $custom_template;
+        } else {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('sx_woo_orders_load_page_template: Template file not found at ' . $custom_template);
+            }
+        }
     }
     return $template;
 }
@@ -135,7 +136,7 @@ function sx_woo_orders_create_page()
     // Check if the page already exists
     $page_title = 'Print Orders';
     $page_check = get_page_by_title($page_title);
-    $page_template = 'templates/page-template-print-orders.php';
+    $page_template = 'templates/page-template-print-order.php';
 
     // Log for debugging
     if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -170,3 +171,13 @@ function sx_woo_orders_create_page()
 
 // Hook into plugin activation
 register_activation_hook(__FILE__, 'sx_woo_orders_create_page');
+
+// Function to get the URL of the "Print Orders" page
+function sx_woo_orders_get_print_orders_page_url()
+{
+    $page = get_page_by_title('Print Orders');
+    if ($page) {
+        return get_permalink($page->ID);
+    }
+    return '';
+}
