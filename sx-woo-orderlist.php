@@ -1,75 +1,69 @@
 <?php
-// Check for WooCommerce installation and activation
+// Hent alle mulige ordrestatusser
+$order_statuses = wc_get_order_statuses();
 
-// Shortcode to display WooCommerce orders
-function sx_woo_orders_list()
-{
-    if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-        global $wpdb;
+// Håndter formens innsending
+$selected_status = isset($_POST['order_status']) ? sanitize_text_field($_POST['order_status']) : 'processing';
 
-        $query = $wpdb->prepare("
-            SELECT o.ID, o.status, o.total_amount, a.first_name, a.last_name, s.date_created, a.address_type 
-            FROM {$wpdb->prefix}wc_orders as o
-            JOIN {$wpdb->prefix}wc_order_addresses as a ON o.ID = a.order_id 
-            JOIN {$wpdb->prefix}wc_order_stats as s ON o.ID = s.order_id 
-            WHERE a.address_type like %s
-        ", 'billing');
+// Hent ordrer basert på valgt status
+$args = array(
+    'limit' => -1 // Hent alle ordrer
+);
 
-        $results = $wpdb->get_results($query);
-        if (empty($results)) {
-            return 'No orders found.';
-        }
-
-        $output = '<table style="width: 100%; border-collapse: collapse; text-align: center;" border="1">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Order Date</th>
-                            <th>Order Status</th>
-                            <th>Customer</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-
-        foreach ($results as $order) {
-            $order_id = $order->ID;
-            $order_date = date('F j, Y', strtotime($order->date_created));
-            $order_status = $order->status;
-            $name = $order->first_name . " " . $order->last_name;
-
-            // Get the URL of the "Print Orders" page and append the order ID as a query parameter
-            $print_orders_url = sx_woo_orders_get_print_orders_page_url() . '?order_id=' . $order_id;
-
-            $output .= '<tr>
-                            <td>' . esc_html($order_id) . '</td>
-                            <td>' . esc_html($order_date) . '</td>
-                            <td>' . esc_html($order_status) . '</td>
-                            <td>' . esc_html($name) . '</td>
-                            <td><a href="' . esc_url($print_orders_url) . '">Print Details</a></td>
-                        </tr>';
-        }
-
-        $output .= '</tbody></table>';
-
-        return $output;
-    }
+if ($selected_status) {
+    $args['status'] = $selected_status;
 }
-function count_wc_orders()
-{
-    global $wpdb;
 
-    // Define the table name (prefix the table with the WordPress table prefix)
-    $table_name = $wpdb->prefix . 'wc_orders';
+$orders = wc_get_orders($args);
 
-    // Write the SQL query to count the number of items in the wc_orders table
-    $query = "SELECT COUNT(*) FROM $table_name";
+// Start output buffering
+$output = '<form method="POST" action="">';
+$output .= '<label for="order_status">Velg ordrestatus:</label>';
+$output .= '<select name="order_status" id="order_status">';
+$output .= '<option value="">Alle</option>';
 
-    // Execute the query and get the result
-    $count = $wpdb->get_var($query);
-
-    // Return the count
-    return $count;
+foreach ($order_statuses as $status_slug => $status_name) {
+    $output .= '<option value="' . esc_attr($status_slug) . '" ' . selected($selected_status, $status_slug, false) . '>' . esc_html($status_name) . '</option>';
 }
-echo '<h1>OrderList</h1>';
-echo sx_woo_orders_list();
+
+$output .= '</select>';
+$output .= '<button type="submit">Søk</button>';
+$output .= '</form>';
+
+$output .= '<table style="width: 100%; border-collapse: collapse; text-align: center;" border="1">';
+$output .= '<thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Order Status</th>
+                    <th>Customer Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>';
+$output .= '<tbody>';
+
+// Loop gjennom hver ordre
+foreach ($orders as $order) {
+    $order_id = $order->get_id();
+    $order_date = $order->get_date_created()->date('Y-m-d H:i:s');
+    $order_status = wc_get_order_status_name($order->get_status());
+    $name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+
+    // Få URL til "Print Orders"-siden og legg til ordre-ID som en query parameter
+    $print_orders_url = sx_woo_orders_get_print_orders_page_url() . '?order_id=' . $order_id;
+
+    $output .= '<tr>
+                    <td>' . esc_html($order_id) . '</td>
+                    <td>' . esc_html($order_date) . '</td>
+                    <td>' . esc_html($order_status) . '</td>
+                    <td>' . esc_html($name) . '</td>
+                    <td><a href="' . esc_url($print_orders_url) . '">Print Details</a></td>
+                </tr>';
+}
+
+$output .= '</tbody>';
+$output .= '</table>';
+
+// Output tabellen
+echo $output;
+?>
