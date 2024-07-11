@@ -45,15 +45,16 @@ if (!$order) {
     }
 
     .woocommerce-order table {
-        width: 100%;
+        width: 90%;
         border-collapse: collapse;
         margin-bottom: 20px;
+        margin: auto;
     }
 
     .woocommerce-order table,
     .woocommerce-order th,
     .woocommerce-order td {
-        border: 1px solid #ddd;
+        border: 1px solid #bbb;
     }
 
     .woocommerce-order th,
@@ -63,15 +64,16 @@ if (!$order) {
     }
 
     .woocommerce-order .addresses {
+        width: 90%;
         display: flex;
         justify-content: space-between;
-        margin-top: 20px;
+        margin: 1rem auto 1rem auto;
     }
 
     .woocommerce-order .address {
         width: 48%;
         padding: 10px;
-        border: 1px solid #ddd;
+        border: 1px solid #bbb;
     }
 
     .page-break {
@@ -94,6 +96,16 @@ if (!$order) {
     .instructions .text {
         padding: 2rem;
     }
+
+    .frame {
+        border: 1px solid #bbb;
+        padding: 1rem;
+    }
+
+    .order_header {
+        width: 90%;
+        margin: 1rem auto 1rem auto;
+    }
     </style>
 </head>
 
@@ -102,7 +114,7 @@ if (!$order) {
         <?php
         // Ordreoverskrift
         echo '<div class="header"><h1>Ordrebekreftelse</h1></div>';
-        echo '<h3>[Ordrenr: #' . $order->get_id() . '] (' . date_i18n('j. F Y', strtotime($order->get_date_created())) . ')</h3>';
+        echo '<h3 class="order_header">[Ordrenr: #' . $order->get_id() . '] (' . date_i18n('j. F Y', strtotime($order->get_date_created())) . ')</h3>';
 
         // Ordrelinjer og totalsummer i samme tabell
         echo '<table>';
@@ -182,26 +194,42 @@ if (!$order) {
                 håndtakene når deg opp til eller rett under armhulene.
             </p>
 
-            <p><b>Juster Lengden Perle-tau: </b>Trekk ut snoren fra håndtaket, løsne knuten, fjern
-                skiven og håndtaket, og juster lengden ved å fjerne ekstra perler. Sett håndtaket
-                og skiven tilbake, knytt en ny knute, og klipp av overflødig snor.
-            </p>
-            <p><b>Juster Lengden PVC-tau: </b>Trekk snoren fra toppen av håndtaket. Fjern
-                stopperen som holder snoren på plass. Trekk snoren gjennom håndtaket til du
-                når ønsket lengde. Klipp av overflødig snor. Tre snor gjennom håndtaket igjen.
-                Sett tilbake stopperen for å sikre snoren i håndtaket.</p>
-            <p><b>Sjekk Kvaliteten: </b>Inspiser snoren for skader. Er snoren frynsete etter kutting, kan du
+            <div class="frame">
+                <p>
+                    <b>Juster Lengden Perle-tau: </b>Trekk ut snoren fra håndtaket, løsne knuten, fjern
+                    skiven og håndtaket, og juster lengden ved å fjerne ekstra perler. Sett håndtaket
+                    og skiven tilbake, knytt en ny knute, og klipp av overflødig snor.
+                </p>
+                <p>
+                    <b>Juster Lengden PVC-tau: </b>Trekk snoren fra toppen av håndtaket. Fjern
+                    stopperen som holder snoren på plass. Trekk snoren gjennom håndtaket til du
+                    når ønsket lengde. Klipp av overflødig snor. Tre snor gjennom håndtaket igjen.
+                    Sett tilbake stopperen for å sikre snoren i håndtaket.
+                </p>
+            </div>
+
+            <p>
+                <b>Sjekk Kvaliteten: </b>Inspiser snoren for skader. Er snoren frynsete etter kutting, kan du
                 forsegle den ved å bruke en lighter eller fyrstikk for å gi en ren finish. Dette vil også
-                forhindre at knuter går opp.</p>
-            <p><b>Hopp Tau:</b>Nå er tauet klar til å brukes. Hopp på et flatt underlag og prøv noen hopp for
-                å sikre forsikre deg om at lengden og justeringene komfortable.</p>
-            <p><b>Hoppe Steg: </b>Grunn hopp, løpesteg, en fot hopp og kryss hopp er eksempler på
+                forhindre at knuter går opp.
+            </p>
+            <p>
+                <b>Hopp Tau:</b>Nå er tauet klar til å brukes. Hopp på et flatt underlag og prøv noen hopp for
+                å sikre forsikre deg om at lengden og justeringene komfortable.
+            </p>
+            <p>
+                <b>Hoppe Steg: </b>Grunn hopp, løpesteg, en fot hopp og kryss hopp er eksempler på
                 grunnlegende steg du kan begynne med. Om du ikke har hoppet tau før anbefaler vi at
-                du ikke hopper mer enn 5-10 minutter den første tiden, øk med tiden.</p>
-            <p><b>Lagring: </b>Oppbevar tauet tørt og rengjør det jevnlig.</p>
-            <p>Vi håper denne sjekklisten hjelper deg med å få mest mulig ut av ditt nye hoppetau.
+                du ikke hopper mer enn 5-10 minutter den første tiden, øk med tiden.
+            </p>
+            <p>
+                <b>Lagring: </b>Oppbevar tauet tørt og rengjør det jevnlig.
+            </p>
+            <p>
+                Vi håper denne sjekklisten hjelper deg med å få mest mulig ut av ditt nye hoppetau.
                 Forslag til øvelser og runtine/combo kan du finne på @kristiane.skips , @tempo.tau på
-                instagram og www.kristianeskips.com samt vår YouTube kanal, kristiane.skips</p>
+                instagram og www.kristianeskips.com samt vår YouTube kanal, kristiane.skips
+            </p>
             <p>God trening!</p>
         </div>
     </div>
