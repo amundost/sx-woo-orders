@@ -72,9 +72,9 @@ function updatePlugin($plugin_slug, $zip_url)
         return false;
     }
 
-    // Initialize the Plugin Upgrader
-    $upgrader = new Plugin_Upgrader();
-    $result = $upgrader->install($tmp_file);
+    // Unzip the file to a temporary directory
+    $unzip_dir = $tmp_dir . '/' . $plugin_slug;
+    $result = unzip_file($tmp_file, $unzip_dir);
 
     // Clean up: delete the temporary zip file
     unlink($tmp_file);
@@ -83,6 +83,16 @@ function updatePlugin($plugin_slug, $zip_url)
         return false;
     }
 
+    // Find the extracted plugin directory
+    $extracted_plugin_dir = $unzip_dir . '/' . $plugin_slug . '-*';
+    $plugin_dirs = glob($extracted_plugin_dir);
+
+    if (empty($plugin_dirs)) {
+        return false;
+    }
+
+    $extracted_plugin_dir = $plugin_dirs[0];
+
     // Deactivate the plugin before updating
     $plugin_file = WP_PLUGIN_DIR . '/' . $plugin_slug . '/' . $plugin_slug . '.php';
     $was_active = is_plugin_active($plugin_file);
@@ -90,8 +100,19 @@ function updatePlugin($plugin_slug, $zip_url)
         deactivate_plugins($plugin_file);
     }
 
-    // Update the plugin
-    $result = $upgrader->upgrade($plugin_file);
+    // Remove the old plugin directory
+    $old_plugin_dir = WP_PLUGIN_DIR . '/' . $plugin_slug;
+    if (!delete_plugins(array($plugin_slug))) {
+        return false;
+    }
+
+    // Move the new plugin files to the plugin directory
+    if (!rename($extracted_plugin_dir, $old_plugin_dir)) {
+        return false;
+    }
+
+    // Clean up: delete the temporary unzip directory
+    rmdir($unzip_dir);
 
     // Reactivate the plugin if it was active before the update
     if ($was_active) {
