@@ -33,79 +33,79 @@ if (!$order) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php wp_head(); ?>
     <style>
-    .woocommerce-order {
-        max-width: 800px;
-        margin: 0 auto;
-        font-family: Arial, sans-serif;
-    }
+        .woocommerce-order {
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
 
-    .woocommerce-order .header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+        .woocommerce-order .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    .woocommerce-order table {
-        width: 90%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        margin: auto;
-    }
+        .woocommerce-order table {
+            width: 90%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            margin: auto;
+        }
 
-    .woocommerce-order table,
-    .woocommerce-order th,
-    .woocommerce-order td {
-        border: 1px solid #bbb;
-    }
+        .woocommerce-order table,
+        .woocommerce-order th,
+        .woocommerce-order td {
+            border: 1px solid #bbb;
+        }
 
-    .woocommerce-order th,
-    .woocommerce-order td {
-        padding: 8px;
-        text-align: left;
-    }
+        .woocommerce-order th,
+        .woocommerce-order td {
+            padding: 8px;
+            text-align: left;
+        }
 
-    .woocommerce-order .addresses {
-        width: 90%;
-        display: flex;
-        justify-content: space-between;
-        margin: 1rem auto 1rem auto;
-    }
+        .woocommerce-order .addresses {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem auto 1rem auto;
+        }
 
-    .woocommerce-order .address {
-        width: 48%;
-        padding: 10px;
-        border: 1px solid #bbb;
-    }
+        .woocommerce-order .address {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #bbb;
+        }
 
-    .page-break {
-        page-break-before: always;
-    }
+        .page-break {
+            page-break-before: always;
+        }
 
-    .instructions {
-        text-align: left;
-        margin-top: 50px;
-        max-width: 800px;
-        margin: auto;
-    }
+        .instructions {
+            text-align: left;
+            margin-top: 50px;
+            max-width: 800px;
+            margin: auto;
+        }
 
-    .instructions img {
-        float: left;
-        max-width: 200px;
-        padding: 1rem;
-    }
+        .instructions img {
+            float: left;
+            max-width: 200px;
+            padding: 1rem;
+        }
 
-    .instructions .text {
-        padding: 2rem;
-    }
+        .instructions .text {
+            padding: 2rem;
+        }
 
-    .frame {
-        border: 1px solid #bbb;
-        padding: 1rem;
-    }
+        .frame {
+            border: 1px solid #bbb;
+            padding: 0 1rem 0 1rem;
+        }
 
-    .order_header {
-        width: 90%;
-        margin: 1rem auto 1rem auto;
-    }
+        .order_header {
+            width: 90%;
+            margin: 1rem auto 1rem auto;
+        }
     </style>
 </head>
 
