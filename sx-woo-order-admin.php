@@ -18,7 +18,6 @@ if (isset($_POST['update_plugin'])) {
     }
 }
 
-//add_filter('site_transient_update_plugins', 'sx_woo_orders_check_for_update');
 function sx_woo_orders_check_for_update()
 {
     $plugin_slug = 'sx-woo-orders';
@@ -33,7 +32,6 @@ function sx_woo_orders_check_for_update()
     // Make an API request to GitHub to fetch the latest release information.
     $response = wp_remote_get($github_api_url);
     $response_body = wp_remote_retrieve_body($response);
-    //echo $response_body;
     $data = json_decode($response_body);
     $available_version = 'Not able to load version tag';
     if (isset($data->tag_name))
@@ -49,7 +47,6 @@ function sx_woo_orders_check_for_update()
         echo "No update available";
     }
 }
-
 
 function updatePlugin($plugin_slug, $zip_url)
 {
@@ -86,11 +83,21 @@ function updatePlugin($plugin_slug, $zip_url)
         return false;
     }
 
-    // Reactivate the plugin if it was active before the update
+    // Deactivate the plugin before updating
     $plugin_file = WP_PLUGIN_DIR . '/' . $plugin_slug . '/' . $plugin_slug . '.php';
-    if (is_plugin_active($plugin_file)) {
+    $was_active = is_plugin_active($plugin_file);
+    if ($was_active) {
+        deactivate_plugins($plugin_file);
+    }
+
+    // Update the plugin
+    $result = $upgrader->upgrade($plugin_file);
+
+    // Reactivate the plugin if it was active before the update
+    if ($was_active) {
         activate_plugin($plugin_file);
     }
 
     return true;
 }
+?>
