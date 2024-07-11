@@ -3,7 +3,7 @@
 Plugin Name: SX Woo Orders
 Plugin URI: https://github.com/amundost/sx-woo-orders
 Description: A WordPress plugin for managing WooCommerce orders.
-Version: 1.0.26
+Version: 1.0.27
 Author: Amund Østvoll
 Author URI: https://www.slackhax.com
 License: GPL2
@@ -29,8 +29,8 @@ function slackhax_admin()
     // Add first submenu item
     add_submenu_page(
         'slackhax-admin',          // Parent slug
-        'All Orders',              // Page title
-        'All Orders',              // Submenu title
+        'Orders',                  // Page title
+        'Orders',                  // Submenu title
         'manage_options',          // Capability
         'all-orders',              // Menu slug
         'sx_woo_orders_page_content', // Callback function for submenu page
