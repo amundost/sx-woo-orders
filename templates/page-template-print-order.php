@@ -33,6 +33,10 @@ if (!$order) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php wp_head(); ?>
     <style>
+        body {
+            -webkit-print-color-adjust: exact;
+        }
+
         .woocommerce-order {
             max-width: 800px;
             margin: 0 auto;
@@ -40,8 +44,15 @@ if (!$order) {
         }
 
         .woocommerce-order .header {
+            background-color: #9370DB;
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        .woocommerce-order .header h1 {
+            padding: 1rem;
+            color: white;
+            font-family: sans-serif;
         }
 
         .woocommerce-order table {
