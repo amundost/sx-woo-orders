@@ -84,14 +84,13 @@ function updatePlugin($plugin_slug, $zip_url)
     }
 
     // Find the extracted plugin directory
-    $extracted_plugin_dir = $unzip_dir . '/' . $plugin_slug . '-*';
-    $plugin_dirs = glob($extracted_plugin_dir);
+    $extracted_plugin_dirs = glob($unzip_dir . '/*', GLOB_ONLYDIR);
 
-    if (empty($plugin_dirs)) {
+    if (empty($extracted_plugin_dirs)) {
         return false;
     }
 
-    $extracted_plugin_dir = $plugin_dirs[0];
+    $extracted_plugin_dir = $extracted_plugin_dirs[0];
 
     // Deactivate the plugin before updating
     $plugin_file = WP_PLUGIN_DIR . '/' . $plugin_slug . '/' . $plugin_slug . '.php';
@@ -102,17 +101,22 @@ function updatePlugin($plugin_slug, $zip_url)
 
     // Remove the old plugin directory
     $old_plugin_dir = WP_PLUGIN_DIR . '/' . $plugin_slug;
-    if (!delete_plugins(array($plugin_slug))) {
-        return false;
+
+    // Use WP_Filesystem to delete the old plugin directory
+    global $wp_filesystem;
+    if (empty($wp_filesystem)) {
+        require_once (ABSPATH . '/wp-admin/includes/file.php');
+        WP_Filesystem();
     }
+    $wp_filesystem->delete($old_plugin_dir, true);
 
     // Move the new plugin files to the plugin directory
-    if (!rename($extracted_plugin_dir, $old_plugin_dir)) {
+    if (!copy_dir($extracted_plugin_dir, $old_plugin_dir)) {
         return false;
     }
 
     // Clean up: delete the temporary unzip directory
-    rmdir($unzip_dir);
+    $wp_filesystem->delete($unzip_dir, true);
 
     // Reactivate the plugin if it was active before the update
     if ($was_active) {
