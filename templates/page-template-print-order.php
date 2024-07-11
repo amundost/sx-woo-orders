@@ -87,8 +87,12 @@ if (!$order) {
 
     .instructions img {
         float: left;
-        max-width: 400px;
-        padding: 3rem;
+        max-width: 200px;
+        padding: 1rem;
+    }
+
+    .instructions .text {
+        padding: 2rem;
     }
     </style>
 </head>
@@ -156,39 +160,50 @@ if (!$order) {
     <div class="page-break"></div>
 
     <div class="instructions">
-        <img src="<?php echo get_template_directory_uri(); ?>/images/logo.png" alt="Logo">
-        <p>
-            <b>Takk for kjøpet!</b><br />
-            Vi håper ditt nye hoppetau tilfredsstiller dine behov. Her er
-            en sjekkliste med det du bør gjøre først for å sikre at
-            hoppetauet passer perfekt for deg:
-        </p>
-        <p>
-            <b>Mål Tauets Lengde: </b>Stå midt på tauet og sjekk at
-            håndtakene når deg opp til eller rett under armhulene.
-        </p>
+        <?php
+        // Hent logoen fra WordPress-tilpasningsinnstillingene
+        if (function_exists('get_custom_logo') && has_custom_logo()) {
+            $custom_logo_id = get_theme_mod('custom_logo');
+            $logo = wp_get_attachment_image_src($custom_logo_id, 'full');
+            if (isset($logo[0])) {
+                echo '<img src="' . esc_url($logo[0]) . '" alt="Logo">';
+            }
+        }
+        ?>
+        <div class="text">
+            <p>
+                <b>Takk for kjøpet!</b><br />
+                Vi håper ditt nye hoppetau tilfredsstiller dine behov. Her er
+                en sjekkliste med det du bør gjøre først for å sikre at
+                hoppetauet passer perfekt for deg:
+            </p>
+            <p>
+                <b>Mål Tauets Lengde: </b>Stå midt på tauet og sjekk at
+                håndtakene når deg opp til eller rett under armhulene.
+            </p>
 
-        <p><b>Juster Lengden Perle-tau: </b>Trekk ut snoren fra håndtaket, løsne knuten, fjern
-            skiven og håndtaket, og juster lengden ved å fjerne ekstra perler. Sett håndtaket
-            og skiven tilbake, knytt en ny knute, og klipp av overflødig snor.
-        </p>
-        <p><b>Juster Lengden PVC-tau: </b>Trekk snoren fra toppen av håndtaket. Fjern
-            stopperen som holder snoren på plass. Trekk snoren gjennom håndtaket til du
-            når ønsket lengde. Klipp av overflødig snor. Tre snor gjennom håndtaket igjen.
-            Sett tilbake stopperen for å sikre snoren i håndtaket.</p>
-        <p><b>Sjekk Kvaliteten: </b>Inspiser snoren for skader. Er snoren frynsete etter kutting, kan du
-            forsegle den ved å bruke en lighter eller fyrstikk for å gi en ren finish. Dette vil også
-            forhindre at knuter går opp.</p>
-        <p><b>Hopp Tau:</b>Nå er tauet klar til å brukes. Hopp på et flatt underlag og prøv noen hopp for
-            å sikre forsikre deg om at lengden og justeringene komfortable.</p>
-        <p><b>Hoppe Steg: </b>Grunn hopp, løpesteg, en fot hopp og kryss hopp er eksempler på
-            grunnlegende steg du kan begynne med. Om du ikke har hoppet tau før anbefaler vi at
-            du ikke hopper mer enn 5-10 minutter den første tiden, øk med tiden.</p>
-        <p><b>Lagring: </b>Oppbevar tauet tørt og rengjør det jevnlig.</p>
-        <p>Vi håper denne sjekklisten hjelper deg med å få mest mulig ut av ditt nye hoppetau.
-            Forslag til øvelser og runtine/combo kan du finne på @kristiane.skips , @tempo.tau på
-            instagram og www.kristianeskips.com samt vår YouTube kanal, kristiane.skips</p>
-        <p>God trening!</p>
+            <p><b>Juster Lengden Perle-tau: </b>Trekk ut snoren fra håndtaket, løsne knuten, fjern
+                skiven og håndtaket, og juster lengden ved å fjerne ekstra perler. Sett håndtaket
+                og skiven tilbake, knytt en ny knute, og klipp av overflødig snor.
+            </p>
+            <p><b>Juster Lengden PVC-tau: </b>Trekk snoren fra toppen av håndtaket. Fjern
+                stopperen som holder snoren på plass. Trekk snoren gjennom håndtaket til du
+                når ønsket lengde. Klipp av overflødig snor. Tre snor gjennom håndtaket igjen.
+                Sett tilbake stopperen for å sikre snoren i håndtaket.</p>
+            <p><b>Sjekk Kvaliteten: </b>Inspiser snoren for skader. Er snoren frynsete etter kutting, kan du
+                forsegle den ved å bruke en lighter eller fyrstikk for å gi en ren finish. Dette vil også
+                forhindre at knuter går opp.</p>
+            <p><b>Hopp Tau:</b>Nå er tauet klar til å brukes. Hopp på et flatt underlag og prøv noen hopp for
+                å sikre forsikre deg om at lengden og justeringene komfortable.</p>
+            <p><b>Hoppe Steg: </b>Grunn hopp, løpesteg, en fot hopp og kryss hopp er eksempler på
+                grunnlegende steg du kan begynne med. Om du ikke har hoppet tau før anbefaler vi at
+                du ikke hopper mer enn 5-10 minutter den første tiden, øk med tiden.</p>
+            <p><b>Lagring: </b>Oppbevar tauet tørt og rengjør det jevnlig.</p>
+            <p>Vi håper denne sjekklisten hjelper deg med å få mest mulig ut av ditt nye hoppetau.
+                Forslag til øvelser og runtine/combo kan du finne på @kristiane.skips , @tempo.tau på
+                instagram og www.kristianeskips.com samt vår YouTube kanal, kristiane.skips</p>
+            <p>God trening!</p>
+        </div>
     </div>
 
     <?php wp_footer(); ?>
